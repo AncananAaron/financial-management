@@ -2,9 +2,11 @@
 
 use Inertia\Inertia;
 use App\Models\Account;
+use App\Models\Inflow;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\InflowController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,8 +43,29 @@ Route::middleware('auth:sanctum')->group(function(){
       return Inertia::render('Account');
     });
 
-    Route::get('/inflow', function () {
-      return Inertia::render('Inflow');
+    Route::prefix('/inflow')->group(function(){
+      Route::get('/', function () {
+        $accounts = Account::all();
+
+        return Inertia::render('Inflow', [
+          'accounts' => $accounts
+        ]);
+      });
+
+      Route::post('/', [InflowController::class, 'store'])
+        ->name('Inflow:store');
+
+
+      // Route::get('/', function(){
+      //   $transactions = Inflow::all();
+
+      //   return Inertia::render('Inflow', [
+      //     'transactions' => $transactions
+      //   ]);
+      // });
+
+      Route::get('/', [InflowController::class, 'show'])
+        ->name('Inflow:show');
     });
 
     Route::get('/outflow', function () {
@@ -60,7 +83,6 @@ Route::middleware('auth:sanctum')->group(function(){
           'accounts' => $accounts
         ]);
       });
-
 
       Route::post('/', [AccountController::class, 'store'])
         ->name('account:store');
