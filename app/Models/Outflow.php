@@ -14,7 +14,7 @@ class Outflow extends Model
 
     protected $fillable = [
       'user_id',
-      'account',
+      'account_id',
       'amount',
       'date',
       'remarks',

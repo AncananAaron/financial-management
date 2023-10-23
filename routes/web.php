@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\InflowController;
+use App\Http\Controllers\OutflowController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,61 +36,53 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::middleware('auth:sanctum')->group(function(){
-    Route::get('/dashboard', function () {
-      return Inertia::render('Dashboard');
-    });
-    Route::get('/account', function () {
-      return Inertia::render('Account');
-    });
+Route::prefix('/outflow')->middleware('auth:sanctum')->group(function(){
 
-    Route::prefix('/inflow')->group(function(){
-      Route::get('/', function () {
-        $accounts = Account::all();
-
-        return Inertia::render('Inflow', [
-          'accounts' => $accounts
-        ]);
-      });
-
-      Route::post('/', [InflowController::class, 'store'])
-        ->name('Inflow:store');
-
-
-      // Route::get('/', function(){
-      //   $transactions = Inflow::all();
-
-      //   return Inertia::render('Inflow', [
-      //     'transactions' => $transactions
-      //   ]);
-      // });
-
-      Route::get('/', [InflowController::class, 'show'])
-        ->name('Inflow:show');
-    });
-
-    Route::get('/outflow', function () {
+    Route::get('/', function () {
       return Inertia::render('Outflow');
     });
 
+    Route::post('/', [OutflowController::class, 'store'])
+    ->name('Outflow:store');
 
-
-
-    Route::prefix('/account')->group(function(){
-      Route::get('/', function () {
-        $accounts = Account::all();
-
-        return Inertia::render('Account', [
-          'accounts' => $accounts
-        ]);
-      });
-
-      Route::post('/', [AccountController::class, 'store'])
-        ->name('account:store');
-    });
+  Route::get('/', [OutflowController::class, 'show'])
+    ->name('Outflow:show');
 
 });
 
 
+Route::prefix('/account')->middleware('auth:sanctum')->group(function(){
+  Route::get('/', function () {
+    $accounts = Account::all();
+
+    return Inertia::render('Account', [
+      'accounts' => $accounts
+    ]);
+  });
+
+  Route::post('/', [AccountController::class, 'store'])
+    ->name('account:store');
+});
 
 
+Route::prefix('/inflow')->middleware('auth:sanctum')->group(function(){
+  Route::get('/', function () {
+    $accounts = Account::all();
+
+    return Inertia::render('Inflow', [
+      'accounts' => $accounts
+    ]);
+  });
+
+  Route::post('/', [InflowController::class, 'store'])
+    ->name('Inflow:store');
+
+  Route::get('/', [InflowController::class, 'show'])
+    ->name('Inflow:show');
+});
+
+Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
+  Route::get('/', function () {
+    return Inertia::render('Dashboard');
+  })->name('dashboard');
+});

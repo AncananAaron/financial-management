@@ -22,7 +22,7 @@ export default function Inflow({accounts, transactions}) {
         </div>
         { transactionform && (
           <div className='fixed inset-0 z-50 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 justify-center items-center outline-none focus:outline-none'>
-            <TransactionForm accounts={accounts} exit={handleAdd}/>
+            <TransactionForm accounts={accounts} exit={handleAdd} type={route('Inflow:store')}/>
           </div>
         )
         }
