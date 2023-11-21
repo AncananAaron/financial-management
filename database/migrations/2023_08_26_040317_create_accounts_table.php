@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->uuid("id")->primary();
+
+            $table->uuid("user_id");
+            $table->foreign("user_id")->references("id")->on("users");
+            
             $table->string('name');
             $table->timestamps();
         });

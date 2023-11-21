@@ -52,8 +52,10 @@ Route::prefix('/account')->middleware('auth:sanctum')->group(function(){
 
 Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
   Route::get('/', function () {
-    $accounts = Account::all();
+
     $id = Auth::id();
+
+    $accounts = Account::where('user_id', '=', $id)->get();
 
     $transactions = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
         ->where('transactions.user_id', '=', $id)
@@ -95,7 +97,7 @@ Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
           return $item->sum('amount');
         });
 
-        $total_payable_per_account = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+    $total_payable_per_account = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
         ->where('transactions.user_id', '=', $id)
         ->where('type_of_account', '=', 'Payable')
         ->select('transactions.*', 'accounts.name')
@@ -103,8 +105,24 @@ Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
         ->get()
         ->groupBy('name')
         ->map(function ($item, $key) {
-          return $item->sum('amount');
+            $totalAmount = $item->sum('amount');
+
+
+            $totalPaid = Transaction::where('user_id', '=', Auth::id())
+                ->where('type_of_account', '=', 'Outflow')
+                ->where('account_id', '=', $item[0]->account_id)
+                ->sum('amount');
+
+            
+            $remainingPayable = $totalAmount - $totalPaid;
+
+            return [
+                'total_amount' => $totalAmount,
+                'total_paid' => $totalPaid,
+                'remaining_payable' => $remainingPayable,
+            ];
         });
+
 
     return Inertia::render('Dashboard',[
       'transactions' => $transactions,
