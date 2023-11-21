@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
-import UserLayout from './Layout/UserLayout';
-import TransactionForm from './Components/TransactionForm';
+import React, { useState }from 'react'
+import TransactionForm from './Components/TransactionForm'
 
 
-export default function Outflow({transactions, accounts}) {
+export default function Transactions({accounts, transactions}) {
 
   const [transactionform, setTransactionForm] = useState(false);
 
@@ -11,8 +10,8 @@ export default function Outflow({transactions, accounts}) {
     e.preventDefault();
     setTransactionForm(!transactionform);
   }
+
   return (
-    <UserLayout>
       <div className="bg-white text-black">
         <div>
           <button className='btn btn-primary' onClick={handleAdd}>
@@ -21,7 +20,7 @@ export default function Outflow({transactions, accounts}) {
         </div>
         { transactionform && (
           <div className='fixed inset-0 z-50 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 justify-center items-center outline-none focus:outline-none'>
-            <TransactionForm accounts={accounts} exit={handleAdd} type={route('Outflow:store')}/>
+            <TransactionForm accounts={accounts} exit={handleAdd}/>
           </div>
         )
         }
@@ -31,6 +30,7 @@ export default function Outflow({transactions, accounts}) {
             <thead className='text-black'>
               <tr>
                 <th>Account</th>
+                <th>Type</th>
                 <th>Amount</th>
                 <th>Date</th>
                 <th>Remarks</th>
@@ -43,6 +43,7 @@ export default function Outflow({transactions, accounts}) {
                   return (
                     <tr key={transaction.id}>
                       <td>{transaction.name}</td>
+                      <td>{transaction.type_of_account}</td>
                       <td>{transaction.amount}</td>
                       <td>{transaction.date}</td>
                       <td>{transaction.remarks}</td>
@@ -58,6 +59,7 @@ export default function Outflow({transactions, accounts}) {
           </table>
         </div>
       </div>
-    </UserLayout>
+
   )
 }
+

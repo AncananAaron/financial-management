@@ -2,12 +2,12 @@
 
 use Inertia\Inertia;
 use App\Models\Account;
-use App\Models\Inflow;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\InflowController;
-use App\Http\Controllers\OutflowController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,21 +36,6 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::prefix('/outflow')->middleware('auth:sanctum')->group(function(){
-
-    Route::get('/', function () {
-      return Inertia::render('Outflow');
-    });
-
-    Route::post('/', [OutflowController::class, 'store'])
-    ->name('Outflow:store');
-
-  Route::get('/', [OutflowController::class, 'show'])
-    ->name('Outflow:show');
-
-});
-
-
 Route::prefix('/account')->middleware('auth:sanctum')->group(function(){
   Route::get('/', function () {
     $accounts = Account::all();
@@ -65,24 +50,75 @@ Route::prefix('/account')->middleware('auth:sanctum')->group(function(){
 });
 
 
-Route::prefix('/inflow')->middleware('auth:sanctum')->group(function(){
+Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
   Route::get('/', function () {
     $accounts = Account::all();
+    $id = Auth::id();
 
-    return Inertia::render('Inflow', [
-      'accounts' => $accounts
+    $transactions = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+        ->where('transactions.user_id', '=', $id)
+        ->select('transactions.*', 'accounts.name')
+        ->orderBy('transactions.date', 'desc')
+        ->get();
+
+    $total_spent = Transaction::where('user_id', '=', $id)
+        ->where('type_of_account', '=', 'Outflow')
+        ->sum('amount');
+
+    $total_earned = Transaction::where('user_id', '=', $id)
+        ->where('type_of_account', '=', 'Inflow')
+        ->sum('amount');
+
+    $total_payable = Transaction::where('user_id', '=', $id)
+        ->where('type_of_account', '=', 'Payable')
+        ->sum('amount');
+
+    $total_spent_per_account = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+        ->where('transactions.user_id', '=', $id)
+        ->where('type_of_account', '=', 'Outflow')
+        ->select('transactions.*', 'accounts.name')
+        ->orderBy('transactions.date', 'desc')
+        ->get()
+        ->groupBy('name')
+        ->map(function ($item, $key) {
+          return $item->sum('amount');
+        });
+
+    $total_earned_per_account = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+        ->where('transactions.user_id', '=', $id)
+        ->where('type_of_account', '=', 'Inflow')
+        ->select('transactions.*', 'accounts.name')
+        ->orderBy('transactions.date', 'desc')
+        ->get()
+        ->groupBy('name')
+        ->map(function ($item, $key) {
+          return $item->sum('amount');
+        });
+
+        $total_payable_per_account = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+        ->where('transactions.user_id', '=', $id)
+        ->where('type_of_account', '=', 'Payable')
+        ->select('transactions.*', 'accounts.name')
+        ->orderBy('transactions.date', 'desc')
+        ->get()
+        ->groupBy('name')
+        ->map(function ($item, $key) {
+          return $item->sum('amount');
+        });
+
+    return Inertia::render('Dashboard',[
+      'transactions' => $transactions,
+      'accounts' => $accounts,
+      'total_spent' => $total_spent,
+      'total_earned' => $total_earned,
+      'total_payable' => $total_payable,
+      'total_spent_per_account' => $total_spent_per_account,
+      'total_earned_per_account' => $total_earned_per_account,
+      'total_payable_per_account' => $total_payable_per_account,
     ]);
   });
 
-  Route::post('/', [InflowController::class, 'store'])
-    ->name('Inflow:store');
+  Route::post('/', [TransactionController::class, 'store'])
+    ->name('transaction:store');
 
-  Route::get('/', [InflowController::class, 'show'])
-    ->name('Inflow:show');
-});
-
-Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
-  Route::get('/', function () {
-    return Inertia::render('Dashboard');
-  })->name('dashboard');
 });

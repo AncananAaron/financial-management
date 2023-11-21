@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('outflows', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->uuid("id")->primary()->unique();
+
+            $table->enum('type_of_account', ['Inflow', 'Outflow','Payable']);
 
             $table->uuid("user_id");
             $table->foreign("user_id")->references("id")->on("users");
@@ -24,6 +26,7 @@ return new class extends Migration
 
             $table->date("date");
             $table->string("remarks");
+
             $table->timestamps();
         });
     }
@@ -33,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('outflows');
+        Schema::dropIfExists('transactions');
     }
 };

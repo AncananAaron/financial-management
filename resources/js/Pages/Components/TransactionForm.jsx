@@ -3,21 +3,26 @@ import { Inertia } from "@inertiajs/inertia";
 import route from "ziggy-js";
 import { usePage } from "@inertiajs/inertia-react";
 
-export default function TransactionForm({ accounts, exit, type }) {
+export default function TransactionForm({ accounts, exit }) {
   const { errors } = usePage().props;
 
   const [data, setData] = useState({
+    type_of_account: "",
     account_id: "",
     amount: 0,
     remarks: "",
     date: "",
   });
 
+  const handleTypeChange = (value) => {
+    setData({ ...data, type_of_account: value });
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
     console.log(data);
-    Inertia.post(type, data);
-    setData({ account_id: "", amount: 0, remarks: "", date: "" });
+    Inertia.post(route("transaction:store"), data);
+    setData({ account_id: "", amount: 0, remarks: "", date: "", type_of_account: "" });
     console.log(errors);
     //exit();
   };
@@ -28,6 +33,35 @@ export default function TransactionForm({ accounts, exit, type }) {
         <h1 className="text-black text-2xl font-bold text-center">
           Add Inflow Transaction
         </h1>
+        <div className="form-control">
+          <label className="label">Select Type</label>
+          <div className="flex flex-row space-x-3">
+            <div className="flex flex-row">
+              <label className="label">Inflow</label>
+              <input
+                type="radio"
+                checked={data.type_of_account === "Inflow"}
+                onChange={() => handleTypeChange("Inflow")}
+              />
+            </div>
+            <div className="flex flex-row">
+              <label className="label">Outflow</label>
+              <input
+                type="radio"
+                checked={data.type_of_account === "Outflow"}
+                onChange={() => handleTypeChange("Outflow")}
+              />
+            </div>
+            <div className="flex flex-row">
+              <label className="label">Payable</label>
+              <input
+                type="radio"
+                checked={data.type_of_account === "Payable"}
+                onChange={() => handleTypeChange("Payable")}
+              />
+            </div>
+          </div>
+        </div>
         {errors.account_id && (
           <div className="alert alert-error">{errors.account_id}</div>
         )}

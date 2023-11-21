@@ -34,7 +34,6 @@ export default function Account({ accounts }) {
   };
 
   return (
-    <UserLayout>
       <div className="h-full bg-white w-full flex flex-col text-black">
         <div className="flex items-center place-content-center">
           <h1 className="p-4 text-3xl font-bold">Accounts</h1>
@@ -77,15 +76,30 @@ export default function Account({ accounts }) {
           ) : null}
         </div>
         <div>
-          <h2>Account's Present</h2>
-          <ul>
-            {accounts.map((account) => (
-              <li key={account.id}>{account.name}<i className="ri-delete-bin-line"></i></li>
-            ))}
-          </ul>
+          <table className="table">
+            <thead className="text-black">
+              <tr>
+                <th>Account Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {accounts.map((account) => {
+                return (
+                  <tr key={account.id}>
+                    <td>{account.name}</td>
+                    <td>
+                      <button className="btn btn-primary">Edit</button>
+                      <button className="btn btn-error btn-outline">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-
       </div>
-    </UserLayout>
   );
 }
