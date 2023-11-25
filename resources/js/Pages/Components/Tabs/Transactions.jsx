@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "@inertiajs/inertia-react";
 import TransactionForm from "../TransactionForm";
 
 export default function Transactions({ accounts, transactions }) {
@@ -8,6 +9,8 @@ export default function Transactions({ accounts, transactions }) {
     e.preventDefault();
     setTransactionForm(!transactionform);
   };
+
+  console.log(transactions)
 
   return (
     <div className="bg-white text-black">
@@ -35,7 +38,7 @@ export default function Transactions({ accounts, transactions }) {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction) => {
+            {transactions.data.map((transaction) => {
               return (
                 <tr key={transaction.id}>
                   <td>{transaction.name}</td>
@@ -43,7 +46,7 @@ export default function Transactions({ accounts, transactions }) {
                   <td>{transaction.amount}</td>
                   <td>{transaction.date}</td>
                   <td>{transaction.remarks}</td>
-                  <td>
+                  <td className="space-x-3">
                     <button className="btn btn-primary">Edit</button>
                     <button className="btn btn-error btn-outline">
                       Delete
@@ -53,6 +56,14 @@ export default function Transactions({ accounts, transactions }) {
               );
             })}
           </tbody>
+          <div className="flex flex-row text-3xl">
+            <div>
+              <Link href={transactions.prev_page_url}><i class="ri-arrow-left-s-line"></i></Link>
+            </div>
+            <div>
+              <Link href={transactions.next_page_url}><i class="ri-arrow-right-s-line"></i></Link>
+            </div>
+          </div>
         </table>
       </div>
     </div>

@@ -61,7 +61,8 @@ Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
         ->where('transactions.user_id', '=', $id)
         ->select('transactions.*', 'accounts.name')
         ->orderBy('transactions.date', 'desc')
-        ->get();
+        ->paginate(5);
+
 
     $total_spent = Transaction::where('user_id', '=', $id)
         ->where('type_of_account', '=', 'Outflow')
@@ -113,7 +114,7 @@ Route::prefix('/dashboard')->middleware('auth:sanctum')->group(function(){
                 ->where('account_id', '=', $item[0]->account_id)
                 ->sum('amount');
 
-            
+
             $remainingPayable = $totalAmount - $totalPaid;
 
             return [
