@@ -17,10 +17,10 @@ return new class extends Migration
             $table->enum('type_of_account', ['Inflow', 'Outflow','Payable']);
 
             $table->uuid("user_id");
-            $table->foreign("user_id")->references("id")->on("users");
+            $table->foreign("user_id")->references("id")->on("users")->onDelete('cascade');
 
             $table->uuid("account_id");
-            $table->foreign("account_id")->references("id")->on("accounts");
+            $table->foreign("account_id")->references("id")->on("accounts")->onDelete('cascade');
 
             $table->decimal('amount', 9, 2);
 

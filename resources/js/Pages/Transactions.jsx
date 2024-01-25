@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "@inertiajs/inertia-react";
 import TransactionForm from "./Components/TransactionForm";
-import Dashboard from "./Components/Dashboard";
+import route from "ziggy-js";
 import UserLayout from "./Layout/UserLayout";
 import EditForm from "./Components/EditForm";
 import DeleteModal from "./Components/DeleteModal";
@@ -67,7 +67,8 @@ export default function Transactions({
         {isDeleteModalVisible && (
           <div className="fixed inset-0 z-50 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 justify-center items-center outline-none focus:outline-none">
             <DeleteModal
-              transaction={currentTransaction}
+              data={currentTransaction}
+              route={route("transaction:delete")}
               exit={handleDeleteExit}
             />
           </div>

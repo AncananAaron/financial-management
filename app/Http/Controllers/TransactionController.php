@@ -137,7 +137,6 @@ class TransactionController extends Controller
 
     $id = Auth::id();
 
-
     Validator::make($inputs, [
       'type_of_account' => ['required', 'in:Inflow,Outflow,Payable'],
       'account_id' => ['required', 'uuid', 'exists:App\Models\Account,id'],

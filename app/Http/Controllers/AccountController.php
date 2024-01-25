@@ -107,23 +107,63 @@ class AccountController extends Controller
 
 
   public function store(Request $request)
+  {
+    $inputs = $request->all();
+    $id = Auth::id();
+
+    Validator::make($inputs, [
+      'name' => ['required', 'string', 'max:30'],
+      'type_of_account' => ['required', 'in:Inflow,Outflow,Payable'],
+    ])->validate();
+
+
+    $account = Account::query()->create([
+      'name' => $inputs['name'],
+      'user_id' => $id,
+      'type_of_account' => $inputs['type_of_account'],
+    ]);
+
+    return redirect()->back();
+
+  }
+
+  public function update(Request $request)
+  {
+    $inputs = $request->all();
+    $id = Auth::id();
+
+    Validator::make($inputs, [
+      'name' => ['required', 'string', 'max:30'],
+      'type_of_account' => ['required', 'in:Inflow,Outflow,Payable'],
+      'id' => ['required', 'uuid', 'exists:App\Models\Account,id'],
+    ])->validate();
+
+    $account = Account::query()->where('id', '=', $inputs['id'])->update([
+      'name' => $inputs['name'],
+      'type_of_account' => $inputs['type_of_account'],
+    ]);
+
+    return redirect()->back();
+  }
+
+  public function delete(Request $request)
+  {
+    $inputs = $request->all();
+    $id = Auth::id();
+
+    Validator::make($inputs, [
+      'id' => ['required', 'uuid', 'exists:App\Models\Account,id'],
+    ])->validate();
+
+    $account = Account::query()->where('id', '=', $inputs['id'])->firstOrFail();
+
+    if (!$account)
     {
-      $inputs = $request->all();
-      $id = Auth::id();
-
-      Validator::make($inputs, [
-        'name' => ['required', 'string', 'max:30'],
-        'type_of_account' => ['required', 'in:Inflow,Outflow,Payable'],
-      ])->validate();
-
-
-      $account = Account::query()->create([
-        'name' => $inputs['name'],
-        'user_id' => $id,
-        'type_of_account' => $inputs['type_of_account'],
-      ]);
-
-      return redirect()->back();
-
+      return redirect()->back()->with('error', 'Account not found');
     }
+
+    $account->delete();
+
+    return redirect()->back();
+  }
 }
