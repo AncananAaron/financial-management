@@ -13,6 +13,8 @@ export default function NavBar() {
       </div>
       {auth.user && (
       <ul className="ml-auto mr-0 space-x-3">
+          <li><Link href="/transactions" >Transactions</Link></li>
+          <li><Link href="/accounts">Account</Link></li>
           <li>
             <h1 className="text-xl text-white">{auth.user.name}</h1>
           </li>

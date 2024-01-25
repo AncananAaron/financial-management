@@ -15,7 +15,8 @@ class Account extends Model
 
     protected $fillable = [
       'user_id',
-      'name'
+      'name',
+      'type_of_account'
     ];
 
     public function user(): HasMany

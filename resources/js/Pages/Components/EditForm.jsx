@@ -1,20 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import route from "ziggy-js";
 import { usePage } from "@inertiajs/inertia-react";
 
-export default function TransactionForm({ accounts, exit }) {
+export default function EditForm({ transaction, accounts, exit }) {
   const { errors } = usePage().props;
 
   const [data, setData] = useState({
-    type_of_account: "",
-    account_id: "",
-    amount: 0,
-    remarks: "",
-    date: "",
+    id: transaction.id,
+    type_of_account: transaction.type_of_account,
+    account_id: transaction.account_id,
+    amount: transaction.amount,
+    remarks: transaction.remarks,
+    date: transaction.date,
   });
 
   const [filteredAccounts, setFilteredAccounts] = useState([]);
+
+  useEffect(() => {
+
+    handleTypeChange(data.type_of_account);
+  }, [data.type_of_account]);
 
   const handleTypeChange = async (value) => {
     setData({ ...data, type_of_account: value });
@@ -24,10 +30,11 @@ export default function TransactionForm({ accounts, exit }) {
     setFilteredAccounts(filterAccounts);
   };
 
+
   const onSubmit = (e) => {
     e.preventDefault();
     console.log(data);
-    Inertia.post(route("transaction:store"), data);
+    Inertia.post(route("transaction:update"), data, { preserveState: true });
     setData({
       account_id: "",
       amount: 0,
@@ -43,7 +50,7 @@ export default function TransactionForm({ accounts, exit }) {
     <div className="card w-full max-w-sm drop-shadow bg-slate-100 border-1 border-black z-100">
       <form className="card-body" onSubmit={onSubmit}>
         <h1 className="text-black text-2xl font-bold text-center">
-          Add Inflow Transaction
+          Edit Transaction
         </h1>
         <div className="form-control">
           <label className="label">Select Type:</label>
@@ -81,6 +88,7 @@ export default function TransactionForm({ accounts, exit }) {
           <label className="label">Select Account:</label>
           <select
             className="select select-ghost w-full max-w-xs"
+            value={data.account_id}
             onChange={(e) => setData({ ...data, account_id: e.target.value })}
           >
             <option value="">Select Account</option>
@@ -101,6 +109,7 @@ export default function TransactionForm({ accounts, exit }) {
           <input
             type="number"
             placeholder="Enter Amount"
+            value={data.amount}
             className="input input-ghost w-full max-w-xs"
             onChange={(e) => setData({ ...data, amount: e.target.value })}
           />
@@ -111,6 +120,7 @@ export default function TransactionForm({ accounts, exit }) {
           <input
             type="date"
             placeholder="Enter Date"
+            value={data.date}
             className="input input-ghost w-full max-w-xs"
             onChange={(e) => setData({ ...data, date: e.target.value })}
           />
@@ -123,6 +133,7 @@ export default function TransactionForm({ accounts, exit }) {
           <textarea
             type="text"
             placeholder="Enter Remarks"
+            value={data.remarks}
             className="textarea textarea-ghost w-full max-w-xs"
             onChange={(e) => setData({ ...data, remarks: e.target.value })}
           />
@@ -135,7 +146,7 @@ export default function TransactionForm({ accounts, exit }) {
         <div className="form-control mt-3">
           <button
             className="btn btn-error btn-outline w-full max-w-xs"
-            onClick={exit}
+            onClick={() => exit()}
           >
             Cancel
           </button>

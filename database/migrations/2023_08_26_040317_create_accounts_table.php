@@ -16,8 +16,10 @@ return new class extends Migration
 
             $table->uuid("user_id");
             $table->foreign("user_id")->references("id")->on("users");
-            
+
             $table->string('name');
+
+            $table->enum('type_of_account', ['Inflow', 'Outflow','Payable']);
             $table->timestamps();
         });
     }
