@@ -15,8 +15,6 @@ export default function StackedBarChart({ total_payable_per_account }) {
   const labels = Object.keys(total_payable_per_account);
   const values = Object.values(total_payable_per_account);
 
-  console.log(labels);
-  console.log(values);
   const backgroundColors = Array.from(
     { length: labels.length },
     () => "rgba(255, 61, 70, 0.4)",
@@ -39,7 +37,6 @@ export default function StackedBarChart({ total_payable_per_account }) {
     },
   ];
 
-  console.log(datasets);
 
   const data = {
     labels: labels,

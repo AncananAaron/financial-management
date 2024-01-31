@@ -16,7 +16,7 @@ class AccountController extends Controller
   {
     $id = $request->user()->id;
 
-    $accounts = Account::where('user_id', '=', $id)->get();
+    $accounts = Account::where('user_id', '=', $id)->paginate(5);
 
     $total_spent = Transaction::where('user_id', '=', $id)
       ->where('type_of_account', '=', 'Outflow')

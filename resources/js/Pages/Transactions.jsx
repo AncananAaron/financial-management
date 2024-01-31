@@ -5,6 +5,7 @@ import route from "ziggy-js";
 import UserLayout from "./Layout/UserLayout";
 import EditForm from "./Components/EditForm";
 import DeleteModal from "./Components/DeleteModal";
+import FilterModal from "./Components/FilterModal";
 
 export default function Transactions({
   accounts,
@@ -15,6 +16,7 @@ export default function Transactions({
   const [isEditFormVisible, setIsEditFormVisible] = useState(false);
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -39,7 +41,15 @@ export default function Transactions({
     setIsDeleteModalVisible(false);
   }
 
-  console.log(accounts);
+  const handleFilter = (e) => {
+    e.preventDefault();
+    setIsFilterModalVisible(true);
+  }
+
+  const handleFilterExit = () => {
+    setIsFilterModalVisible(false);
+  }
+
 
   return (
     <UserLayout dashboard_data={dashboard_data}>
@@ -48,7 +58,16 @@ export default function Transactions({
           <button className="btn btn-primary" onClick={handleAdd}>
             Add Transaction
           </button>
+
+          <button className="btn btn-primary" onClick={handleFilter}>
+            Filter
+          </button>
         </div>
+        {isFilterModalVisible && (
+          <div className="fixed inset-0 z-50 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 justify-center items-center outline-none focus:outline-none">
+            <FilterModal exit={handleFilterExit} accounts={accounts}/>
+          </div>
+        )}
         {transactionform && (
           <div className="fixed inset-0 z-50 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 justify-center items-center outline-none focus:outline-none">
             <TransactionForm accounts={accounts} exit={handleAdd} />
@@ -111,7 +130,8 @@ export default function Transactions({
                 );
               })}
             </tbody>
-            <div className="flex flex-row text-3xl">
+          </table>
+          <div className="flex flex-row text-3xl">
               <div>
                 <Link href={transactions.prev_page_url}>
                   <i className="ri-arrow-left-s-line"></i>
@@ -123,7 +143,6 @@ export default function Transactions({
                 </Link>
               </div>
             </div>
-          </table>
         </div>
       </div>
     </UserLayout>

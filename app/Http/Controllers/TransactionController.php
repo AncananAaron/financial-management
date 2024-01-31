@@ -83,11 +83,51 @@ class TransactionController extends Controller
           ];
       });
 
-    $transactions = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
-      ->where('transactions.user_id', '=', $id)
-      ->select('transactions.*', 'accounts.name')
-      ->orderBy('transactions.date', 'desc')
-      ->paginate(5);
+    // $transactions = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+    //   ->where('transactions.user_id', '=', $id)
+    //   ->select('transactions.*', 'accounts.name')
+    //   ->orderBy('transactions.date', 'desc')
+    //   ->paginate(5);
+
+  $query = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
+      ->where('transactions.user_id', '=', $id);
+
+      if ($request->has('type_of_account') && in_array($request->type_of_account, ['Inflow', 'Outflow', 'Payable']))
+      {
+        $query->where('transactions.type_of_account', '=', $request->type_of_account);
+      }
+
+      if ($request->has('account_id') && $request->account_id)
+      {
+        if (!$request->account_id == 'All')
+        {
+          $query->where('transactions.account_id', '=', $request->account_id);
+        }
+      }
+
+      if ($request->has('date') && $request->start_date)
+      {
+        $query->where('transactions.date', '>=', $request->start_date);
+      }
+
+      if ($request->has('greater_than_amount') && $request->greater_than_amount)
+      {
+        $query->where('transactions.amount', '>=', $request->greater_than_amount);
+      }
+
+      if ($request->has('less_than_amount') && $request->less_than_amount)
+      {
+        $query->where('transactions.amount', '<=', $request->less_than_amount);
+      }
+
+      if (!$request->hasAny(['type_of_account', 'account_id', 'date', 'greater_than_amount', 'less_than_amount']))
+      {
+        $query->orderBy('transactions.date', 'desc');
+      }
+
+      $transactions = $query->paginate(5);
+
+
 
     return Inertia::render('Transactions', [
       'transactions' => $transactions,

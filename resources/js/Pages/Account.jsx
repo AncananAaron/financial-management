@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePage } from "@inertiajs/inertia-react";
+import { usePage, Link } from "@inertiajs/inertia-react";
 import route from "ziggy-js";
 import UserLayout from "./Layout/UserLayout";
 import DeleteModal from "./Components/DeleteModal";
@@ -88,7 +88,7 @@ export default function Account({ accounts, dashboard_data }) {
               </tr>
             </thead>
             <tbody>
-              {accounts.map((account) => {
+              {accounts.data.map((account) => {
                 return (
                   <tr key={account.id}>
                     <td>{account.name}</td>
@@ -112,6 +112,18 @@ export default function Account({ accounts, dashboard_data }) {
               })}
             </tbody>
           </table>
+          <div className="flex flex-row text-3xl">
+              <div>
+                <Link href={accounts.prev_page_url}>
+                  <i className="ri-arrow-left-s-line"></i>
+                </Link>
+              </div>
+              <div>
+                <Link href={accounts.next_page_url}>
+                  <i className="ri-arrow-right-s-line"></i>
+                </Link>
+              </div>
+            </div>
         </div>
       </div>
     </UserLayout>
