@@ -5,7 +5,7 @@ import { usePage } from "@inertiajs/inertia-react";
 
 export default function EditForm({ transaction, accounts, exit }) {
   const { errors } = usePage().props;
-
+  console.log(transaction)
   const [data, setData] = useState({
     id: transaction.id,
     type_of_account: transaction.type_of_account,

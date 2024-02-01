@@ -90,7 +90,8 @@ class TransactionController extends Controller
     //   ->paginate(5);
 
   $query = Transaction::join('accounts', 'accounts.id', '=', 'transactions.account_id')
-      ->where('transactions.user_id', '=', $id);
+      ->where('transactions.user_id', '=', $id)
+      ->select('transactions.*', 'accounts.name');
 
       if ($request->has('type_of_account') && in_array($request->type_of_account, ['Inflow', 'Outflow', 'Payable']))
       {
@@ -99,7 +100,11 @@ class TransactionController extends Controller
 
       if ($request->has('account_id') && $request->account_id)
       {
-        if (!$request->account_id == 'All')
+        if ($request->account_id === 'All')
+        {
+          $query->get();
+        }
+        else
         {
           $query->where('transactions.account_id', '=', $request->account_id);
         }

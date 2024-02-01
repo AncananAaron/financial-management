@@ -35,21 +35,20 @@ export default function Transactions({
   const handleDelete = (transaction) => {
     setCurrentTransaction(transaction);
     setIsDeleteModalVisible(true);
-  }
+  };
 
   const handleDeleteExit = () => {
     setIsDeleteModalVisible(false);
-  }
+  };
 
   const handleFilter = (e) => {
     e.preventDefault();
     setIsFilterModalVisible(true);
-  }
+  };
 
   const handleFilterExit = () => {
     setIsFilterModalVisible(false);
-  }
-
+  };
 
   return (
     <UserLayout dashboard_data={dashboard_data}>
@@ -65,7 +64,7 @@ export default function Transactions({
         </div>
         {isFilterModalVisible && (
           <div className="fixed inset-0 z-50 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50 justify-center items-center outline-none focus:outline-none">
-            <FilterModal exit={handleFilterExit} accounts={accounts}/>
+            <FilterModal exit={handleFilterExit} accounts={accounts} />
           </div>
         )}
         {transactionform && (
@@ -122,7 +121,10 @@ export default function Transactions({
                         Edit
                       </button>
 
-                      <button className="btn btn-error btn-outline" onClick={() => handleDelete(transaction)}>
+                      <button
+                        className="btn btn-error btn-outline"
+                        onClick={() => handleDelete(transaction)}
+                      >
                         Delete
                       </button>
                     </td>
@@ -132,17 +134,17 @@ export default function Transactions({
             </tbody>
           </table>
           <div className="flex flex-row text-3xl">
-              <div>
-                <Link href={transactions.prev_page_url}>
-                  <i className="ri-arrow-left-s-line"></i>
-                </Link>
-              </div>
-              <div>
-                <Link href={transactions.next_page_url}>
-                  <i className="ri-arrow-right-s-line"></i>
-                </Link>
-              </div>
+            <div>
+              <Link href={transactions.prev_page_url}>
+                <i className="ri-arrow-left-s-line"></i>
+              </Link>
             </div>
+            <div>
+              <Link href={transactions.next_page_url}>
+                <i className="ri-arrow-right-s-line"></i>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </UserLayout>
